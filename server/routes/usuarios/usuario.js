@@ -5,18 +5,54 @@ const path = require('path');
 const rutaDescarga = path.resolve(__dirname,'../../assets/index.html');
 
 app.get('/', (req, res)=>{
-    const arrUsuarios= arrJsnUsuarios;
-    return res.status(200).json({
-       ok:true,
-       msg:'Se recibierón los usuarios de manera exitosa',
-        cont:{
-           arrUsuarios
-        }
-    })
 
-    //console.log(rutaDescarga);
-   //return res.download('index.html',rutaDescarga);
+  return res.status(200).json({
+            ok:true,
+            msg:'Lista de usuarios',
+             cont:{
+                arrJsnUsuarios
+             }
+         })
+   
+    
+})
 
+app.get('/obtenerUsuario', (req, res)=>{
+    const _idUsuario = Number(req.query._idUsuario);
+
+    if(!_idUsuario){
+        return res.status(200).json({
+            ok:false,
+            msg:'Favor de enviar el id del usuario a buscar',
+             cont:{
+                
+             }
+         });
+    }
+  
+
+
+    const usuarioEncontrado = arrJsnUsuarios.find(usuario => usuario._id == _idUsuario);
+        
+    if(usuarioEncontrado){
+        return res.status(200).json({
+            ok:true,
+            msg:'Se encontro el usuario',
+             cont:{
+                usuarioEncontrado
+             }
+         })
+    }
+    else{
+        return res.status(200).json({
+            ok:false,
+            msg:`No se encontro el usuario ${_idUsuario} en la base de datos`,
+             cont:{
+                
+             }
+         });
+    }
+    
 })
 
 app.post('/', (req, res)=>{
@@ -147,4 +183,4 @@ app.delete('/', (req, res)=>{
         });
     }
 });
-module.exports = app;gt 
+module.exports = app; 
