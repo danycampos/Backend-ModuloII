@@ -7,13 +7,30 @@ app.get('/',  async (req, res) => {
 const obtenerProductos =  await productoModel.find();
 console.log(obtenerProductos);
 
-return res.status(200).json({
-    ok:true,
-    msg:"Se conectó al metódo get de producto",
+if(obtenerProductos.length > 0)
+{
+    
+    return res.status(200).json({
+        ok:true,
+        msg:"Se conectó al metódo get de producto",
+        cont:{
+          obtenerProductos
+        }
+      });
+}
+else
+{
+  return res.status(200).json({
+    ok:false,
+    msg:"Se conectó al metódo get de producto, no se encontraron productos",
     cont:{
       obtenerProductos
     }
-   });
+  });
+
+}
+
+
 });
 
 module.exports = app;

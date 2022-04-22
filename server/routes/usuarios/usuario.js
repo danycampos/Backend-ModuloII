@@ -8,18 +8,45 @@ app.get('/',  async (req, res) => {
 const obtenerUsuarios =  await usuarioModel.find();
 console.log(obtenerUsuarios);
 
-return res.status(200).json({
-    ok:true,
-    msg:"Se conectó al metódo get de usuarios",
-    cont:{
-        obtenerUsuarios
+if(obtenerUsuarios.length > 0)
+{
+    return res.status(200).json({
+        ok:true,
+        msg:"Se conectó al metódo get de usuarios",
+        cont:{
+            obtenerUsuarios
+        }
+    });
     }
-   });
+    else{
+        return res.status(200).json({
+            ok:false,
+            msg:"Se conectó al metódo get de usuarios, no se encontraron usuarios",
+            cont:{
+                obtenerUsuarios
+            }
+        });
+    }
+
 });
 
 //Método Post
 app.post('/', async (req, res)=>{
     const body = req.body;
+    const obtenerUsuario = await usuarioModel.find({ strCorreo:body.strEmail });
+    
+    if(obtenerUsuario.length > 0)
+    {
+        return res.status(200).json({
+            ok:false,
+            msg:"El usuario no se registro debido a que ya existe",
+            cont:{
+                obtenerUsuario
+            }
+        });
+
+    }
+
     const usuarioBody = new usuarioModel(body);
     const err = usuarioBody.validateSync();
     if(err){
@@ -35,200 +62,14 @@ app.post('/', async (req, res)=>{
     const usuarioRegistrado = await usuarioBody.save();
 
     return res.status(200).json({
-        ok:false,
+        ok:true,
         msg:"El usuario se registro de manera exitosa",
         cont:{
             usuarioRegistrado
         }
     });
-
+         
 });
 
 
 module.exports = app;
-
-
-//let arrJsnUsuarios = [{ _id: 1, strNombre: '', strApellido:'',strEmail:''}]
-//const path = require('path');
-//const rutaDescarga = path.resolve(__dirname,'../../assets/index.html');
-
-// app.get('/', (req, res)=>{
-
-//   return res.status(200).json({
-//             ok:true,
-//             msg:'Lista de usuarios',
-//              cont:{
-//                 arrJsnUsuarios
-//              }
-//          })
-   
-    
-// })
-
-// app.get('/obtenerUsuario', (req, res)=>{
-//     const _idUsuario = Number(req.query._idUsuario);
-
-//     if(!_idUsuario){
-//         return res.status(200).json({
-//             ok:false,
-//             msg:'Favor de enviar el id del usuario a buscar',
-//              cont:{
-                
-//              }
-//          });
-//     }
-  
-
-
-//     const usuarioEncontrado = arrJsnUsuarios.find(usuario => usuario._id == _idUsuario);
-        
-//     if(usuarioEncontrado){
-//         return res.status(200).json({
-//             ok:true,
-//             msg:'Se encontro el usuario',
-//              cont:{
-//                 usuarioEncontrado
-//              }
-//          })
-//     }
-//     else{
-//         return res.status(200).json({
-//             ok:false,
-//             msg:`No se encontro el usuario ${_idUsuario} en la base de datos`,
-//              cont:{
-                
-//              }
-//          });
-//     }
-    
-// })
-
-// app.post('/', (req, res)=>{
-//     //const strNombre =  { strNombre : req.body.strNombre};
-//     // const strApellido = {strApellido : req.body.strApellido};
-//     // const strEmail =  req.body.strEmail;
-//     // const _id =  req.body._id;
-//     //console.log(strNombre, strApellido, strEmail, _id);
-
-//     const body = { strNombre : req.body.strNombre, 
-//             strApellido : req.body.strApellido, 
-//             strEmail: req.body.strEmail, 
-//             _id:parseInt(req.body._id) };
-     
-//     if(typeof body.strNombre == "undefined" || typeof body.strApellido == "undefined" || typeof body.strEmail == "undefined" || typeof body._id == "undefined" ){
-//         console.log("No se permiten valore vacíos, los datos no se guardaran");
-//         return;
-//     }
-
-//     const existe = arrJsnUsuarios.find(item => item._id == body._id);  
-
-//     console.log(typeof existe, existe);
-//     if(typeof existe != "object")
-//     {
-//         console.log("entro en push");
-
-//             arrJsnUsuarios.push(body);
-//             res.status(200).json({
-//             ok:true,
-//             msg:"Se registro el usuario de manera correcta",
-//             count:{
-//                 arrJsnUsuarios
-//             }
-//         });
-//         console.log(arrJsnUsuarios);
-//     }
-//     else{
-//             res.status(200).json({
-//             ok:false,
-//             msg:"El usuario ya existe, no se grabará",
-//             count:{
-//                 body
-//             }
-//         });
-//         }
-    
-// });
-
-// app.put('/', (req, res)=>{
-//     const _idUsuario = parseInt(req.query._idUsuario);
-//     const existe = arrJsnUsuarios.find(item => item._id === _idUsuario);  
-
-//         if(_idUsuario){
-//             if(existe)
-//             {
-//                 const nuevoUsuario = {
-//                     strNombre : req.body.strNombre, 
-//                     strApellido : req.body.strApellido, 
-//                     strEmail: req.body.strEmail, 
-//                     _id:_idUsuario
-//                 }
-
-//                 const filtrarUsuario = arrJsnUsuarios.filter(usuario => usuario._id != _idUsuario);
-//                 arrJsnUsuarios = filtrarUsuario;
-//                 arrJsnUsuarios.push(nuevoUsuario);
-//                 console.log(arrJsnUsuarios);
-            
-//             res.status(200).json({
-//                 ok:true,
-//                 msg:"Se actualizó de manera exitosa el usuario " + _idUsuario
-//             });
-//         }
-//         else{
-//             res.status(200).json({
-//                 ok:false,
-//                 msg:"El identificador del usuairo no existe",
-//                 cont:{
-//                     _idUsuario
-//                 }
-//             });
-//         }
-//     }
-//     else{
-//         res.status(200).json({
-//             ok:false,
-//             msg:"El identificador del usuairo no existe",
-//             cont:{
-//                 _idUsuario
-//             }
-//         });
-//     }
-// });
-
-// app.delete('/', (req, res)=>{
-//     const _idUsuario = parseInt(req.query._idUsuario);
-     
-
-//         if(_idUsuario){
-//             const existe = arrJsnUsuarios.find(item => item._id === _idUsuario); 
-//             if(existe)
-//             {
-//                 const filtrarUsuario = arrJsnUsuarios.filter(usuario => usuario._id != _idUsuario);
-//                 arrJsnUsuarios = filtrarUsuario;                
-//                 console.log(arrJsnUsuarios);
-            
-//            return res.status(200).json({
-//                 ok:true,
-//                 msg:"Se eliminó de manera exitosa el usuario " + _idUsuario
-//             });
-//         }
-//         else{
-//             res.status(200).json({
-//                 ok:false,
-//                 msg:"El identificador del usuairo no existe",
-//                 cont:{
-//                     _idUsuario
-//                 }
-//             });
-//         }
-//     }
-//     else{
-//       return  res.status(200).json({
-//             ok:false,
-//             msg:"El identificador del usuairo no existe",
-//             cont:{
-//                 _idUsuario
-//             }
-//         });
-//     }
-// });
-// module.exports = app; 
