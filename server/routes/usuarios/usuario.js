@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express.Router();
+const bcrypt = require('bcrypt');
 const usuarioModel = require('../../models/usuario/usuario.model');
 
 //Método get
@@ -32,9 +33,9 @@ if(obtenerUsuarios.length > 0)
 
 //Método Post
 app.post('/', async (req, res)=>{
-    const body = req.body;
-    const obtenerUsuario = await usuarioModel.find({ strCorreo:body.strEmail });
-    
+    const body = { ...req.body, strContrasena: req.body.strContrasena ? bcrypt.hashSync(req.body.strContrasena, 10) : undefined };    
+    const obtenerUsuario = await usuarioModel.find({strEmail: body.strEmail});
+
     if(obtenerUsuario.length > 0)
     {
         return res.status(200).json({
