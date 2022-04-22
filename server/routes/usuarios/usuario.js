@@ -6,7 +6,7 @@ const usuarioModel = require('../../models/usuario/usuario.model');
 //Método get
 app.get('/',  async (req, res) => {
 
-const obtenerUsuarios =  await usuarioModel.find();
+const obtenerUsuarios =  await usuarioModel.find({},{ strContrasena:0 });
 console.log(obtenerUsuarios);
 
 if(obtenerUsuarios.length > 0)
