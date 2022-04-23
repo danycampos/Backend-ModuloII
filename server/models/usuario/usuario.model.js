@@ -20,6 +20,10 @@ let SchemaUsuario = mongoose.Schema({
     strContrasena:{
         type:String,
         required:[true, "No se recibió strContrasena"]
+    },
+    strNombreUsuario:{
+        type:String,
+        required:[true, "No se recibió strNombreUsuario"]
     }
 });
 

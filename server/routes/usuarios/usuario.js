@@ -34,13 +34,26 @@ if(obtenerUsuarios.length > 0)
 //Método Post
 app.post('/', async (req, res)=>{
     const body = { ...req.body, strContrasena: req.body.strContrasena ? bcrypt.hashSync(req.body.strContrasena, 10) : undefined };    
-    const obtenerUsuario = await usuarioModel.find({strEmail: body.strEmail});
-
-    if(obtenerUsuario.length > 0)
+    const encontroEmail = await usuarioModel.find( { strEmail: body.strEmail } );
+    const encontroNombreUsuario = await usuarioModel.find( { strNombreUsuario: body.strNombreUsuario } );
+    
+    if(encontroEmail.length > 0 )
     {
         return res.status(200).json({
             ok:false,
-            msg:"El usuario no se registro debido a que ya existe",
+            msg:"El usuario no se registro debido a que ya existe el email",
+            cont:{
+                obtenerUsuario
+            }
+        });
+
+    }
+
+    if(encontroNombreUsuario.length > 0 )
+    {
+        return res.status(200).json({
+            ok:false,
+            msg:"El usuario no se registro debido a que ya existe el nombre de usuario",
             cont:{
                 obtenerUsuario
             }
