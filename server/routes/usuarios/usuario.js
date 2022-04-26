@@ -85,6 +85,7 @@ app.post('/', async (req, res)=>{
          
 });
 
+//Método Put
 app.put('/', async(req, res)=>{
     try {
         const _idUsuario = req.query._id;
@@ -142,6 +143,53 @@ app.put('/', async(req, res)=>{
                 _idUsuario
             }
         });
+    }
+});
+
+//Método Delete
+app.delete('/', async(req, res)=>{
+    try{
+
+        const _idUsuario = req.query._id;
+        const blnEstado = req.query.blnEstado == "true" ? true: false;
+
+        if(!_idUsuario || _idUsuario.length != 24){
+            return res.status(400).json({
+                ok:false,
+                msg: _idUsuario ? "El identificador no es válido, se requiere un id de 24 caracteres" : "No se recibió el identificador del usuario",
+                cont:{
+                    _idUsuario: _idUsuario
+                }
+            });
+        }
+
+        if(!blnEstado){
+            return res.status(400).json({
+                ok:false,
+                msg: _idUsuario ? "El blnEstado no es true or false" : "No se recibió el blnEstado",
+                cont:{
+                    blnEstado: blnEstado
+                }
+            });    
+        }        
+
+        return res.status(200).json({
+            ok:true,
+            msg: blnEstado ? "El usuario se activo de manera exitosa": "El usuario se desactivo de manera exitosa",
+            cont:{
+                desactivarUsuario
+            }
+        });
+
+    }
+    catch(error){
+        return res.status(500).json({
+            ok:false,
+            msg: "Error en el servidor",
+            cont:{
+                error: error
+            }
+        }); 
     }
 });
 

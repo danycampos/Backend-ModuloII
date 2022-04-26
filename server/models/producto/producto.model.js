@@ -12,6 +12,10 @@ let SchemaProducto = mongoose.Schema({
     nmbPrecio:{
         type:Number,
         required:[true, "No se recibió nmbPrecios"]
+    },
+    blnEstado:{
+        type:Boolean,
+        default:true
     }
 });
 

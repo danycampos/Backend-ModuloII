@@ -24,6 +24,10 @@ let SchemaUsuario = mongoose.Schema({
     strNombreUsuario:{
         type:String,
         required:[true, "No se recibió strNombreUsuario"]
+    },
+    blnEstado:{
+        type:Boolean,
+        default:true
     }
 });
 

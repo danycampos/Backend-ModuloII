@@ -2,6 +2,7 @@ const express = require('express');
 const app = express.Router();
 const productoModel = require('../../models/producto/producto.model');
 
+//Método Get
 app.get('/',  async (req, res) => {
 
 const obtenerProductos =  await productoModel.find();
@@ -73,6 +74,7 @@ app.post('/', async (req, res)=>{
        
 });
 
+//Método Put
 app.put('/', async (req, res)=>{
   try {
     const _idProducto = req.query._id;
@@ -116,5 +118,65 @@ app.put('/', async (req, res)=>{
   
 });
 
+//Método Delete
+app.delete('/', async (req, res) =>{
+  try{
+      const _idProducto = req.query._id;
+      const blnEstado = req.query.blnEstado;
+
+      if(!_idProducto || _idProducto.length != 24){
+        return res.status(400).json({
+          ok:false,
+          msg: _idProducto ? "El identificador no es válido, se requiere un id de 24 caracteres" : "No se recibió el identificador del producto",
+          cont:{
+            _idProducto
+          }
+        });
+      }
+
+      if(!blnEstado){
+        return res.status(400).json({
+          ok:false,
+          msg: "El blnEstado no se envió",
+          cont:{
+            _idProducto
+          }
+        });
+      }
+
+        //Esta línea elimina definitivamente el producto
+        //const eliminarProducto = await productoModelo.findOneAndDelete( { _id:_idProducto } );
+        //Esta línea actualiza el estado "borrado lógico"
+        const desactivarProducto = await productoModelo.findOne( {_id:_idProducto }, { $set : { blnEstado: blnEstado }}, { new:true } );
+
+        if(!desactivarProducto){
+          return res.status(400).json({
+            ok:false,
+            msg: "El producto no se logró desactivar de la base de datos",
+            cont:{
+              _idProducto
+            }
+          });
+        }
+
+        return res.status(200).json({
+          ok:true,
+          msg: blnEstado ? "El producto se activo de la base de datos": "El producto se desactivo de la base de datos",
+          cont:{
+            eliminarProducto
+          }
+        });
+
+  }
+  catch(err){
+    return res.status(500).json({
+      ok:false,
+      msg: error,
+      cont:{
+        _idProducto
+      }
+    });
+  }
+});
 
 module.exports = app;
