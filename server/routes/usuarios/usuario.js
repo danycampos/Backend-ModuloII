@@ -85,5 +85,64 @@ app.post('/', async (req, res)=>{
          
 });
 
+app.put('/', async(req, res)=>{
+    try {
+        const _idUsuario = req.query._id;
+        if(!_idUsuario || _idUsuario.length != 24 ){
+            return res.status(400).json({
+                ok:false,
+                msg: _idUsuario ? "El identificador no es válido, se requiere un id de 24 caracteres" : "No se recibió el identificador del usuario",
+                cont:{
+                    _idUsuario
+                }
+            });
+        }
+
+        const encontroUsuario = await usuarioModel.findOne({ _id:_idUsuario })
+        if(!encontroUsuario){
+            return res.status(400).json({
+                ok:false,
+                msg: "El usuario no se encuentra registrado en la base de datos",
+                cont:{
+                    _idUsuario
+                }
+            });
+        }
+
+        const encontroNombreDeUsuario = await usuarioModel.findOne({ strNombreUsuario:strNombreUsuario, _id:{ $ne: _idUsuario } }, { strNombre:1, strApellido:1, strDomicilio:1 })
+        if(encontroUsuario){
+            return res.status(400).json({
+                ok:false,
+                msg: "El usuario ya se encuentra registrado en la base de datos",
+                cont:{
+                    encontroNombreDeUsuario
+                }
+            });
+        }
+
+
+        const actualizarUsuario = await usuarioModel.findByIdAndUpdate(_idUsuario , { $set: { strNombre: req.body.strNombre, strApellido:req.body.strApellido, strDireccion:req.body.strDireccion }}, { new:true } );
+
+        return res.status(200).json({
+            ok:true,
+            msg:"El usuario se actualizó de manera exitosa",
+            cont:{
+              usuarioAnterior:encontroUsuario,
+              usuarioActual:req.body
+            }
+          });
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok:false,
+            msg: error,
+            cont:{
+                _idUsuario
+            }
+        });
+    }
+});
 
 module.exports = app;

@@ -73,5 +73,48 @@ app.post('/', async (req, res)=>{
        
 });
 
+app.put('/', async (req, res)=>{
+  try {
+    const _idProducto = req.query._id;
+    
+    if(!_idProducto || _idProducto.length != 24){
+      return res.status(400).json({
+        ok:false,
+        msg: _idProducto ? "El identificador no es válido, se requiere un id de 24 caracteres" : "No se recibió el identificador del producto",
+        cont:{
+          _idProducto
+        }
+      });     
+    }
+    const encontrarProducto = await productoModel.findOne({ _id: _idProducto });
+    if(!encontrarProducto){
+      return res.status(400).json({
+        ok:false,
+        msg: "El producto no se encuentra registrado en la base de datos",
+        cont:{
+          _idProducto
+        }
+      });
+    }
+    
+    // const actualizarProducto = await productoModel.updateOne({ _id: _idProducto } , { $set: { ... req.body} });
+    const actualizarProducto = await productoModel.findByIdAndUpdate(_idProducto, { $set: { ... req.body} }, {new: true});
+
+    
+    return res.status(200).json({
+      ok:true,
+      msg:"El roducto se actualizó de manera exitosa",
+      cont:{
+        productoAnterior:encontrarProducto,
+        productoActual:actualizarProducto
+      }
+    });
+
+  } catch (error) {
+    console.log(error);
+  }
+  
+});
+
 
 module.exports = app;
