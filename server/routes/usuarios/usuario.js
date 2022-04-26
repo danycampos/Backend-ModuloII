@@ -173,6 +173,17 @@ app.delete('/', async(req, res)=>{
             });    
         }        
 
+        const desactivarUsuario = await usuarioModel.findOneAndUpdate( { _id:_idUsuario }, {$set:{ blnEstado : blnEstado }}, { new:true });
+
+        if(!desactivarUsuario){
+            return res.status(400).json({
+                ok:false,
+                msg: "El usuario no se logró desactivar de la base de datos",
+                cont:{
+                    usuario: _idUsuario
+                }
+            });
+        }
         return res.status(200).json({
             ok:true,
             msg: blnEstado ? "El usuario se activo de manera exitosa": "El usuario se desactivo de manera exitosa",
