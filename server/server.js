@@ -1,29 +1,35 @@
-require('../server/config');
+/* Importación de los módulos necesarios para que se ejecute la aplicación. */
+/* Importando el archivo de configuración. */
+require('./config/config');
+/* Un módulo que te permite usar colores en la consola. */
 require('colors');
+/* Importación del módulo express. */
+const express = require("express");
+/* Importación del módulo mongoose. */
 const mongoose = require("mongoose");
-const express = require('express');
+/* Creación de una instancia de la aplicación express. */
 const app = express();
 
-app.use(express.urlencoded({extended:true}));
-app.use('/api', require('./routes/index'));
+/* Un middleware que analiza el cuerpo de la solicitud. */
+app.use(express.urlencoded({ extended: true }))
 
-console.log(process.env.URLDB, 'URLDB');
+/* Diciéndole al servidor que use las rutas en el archivo index.js en la carpeta de rutas. */
+app.use('/api', require('./routes/index'))
 
-mongoose.connect(process.env.URLDB, {
-    //useNewUrlParse:true
-    //useUnifiedTopology:true
-    // useCreateIndex:true    
-},(err, resp) =>{
-  if(err){
-      console.log(`Error al conectarse a la B.D. ${process.env.URLDB}`.red);
-      return err;
-  }
-  else{
-    console.log(`Se conectó a la B.D. ${process.env.URLDB}`.green);
-  }
-}
-);
+/* Conexión a la base de datos. */
+mongoose.connect(process.env.urlDB, (err, resp) => {
+    /* Comprobando si hay un error al conectarse a la base de datos. */
+    if (err) {
+        console.log("Error al conectar a la base de datos");
+        console.log(err);
+        return err;
+    }
+    console.log("Se conectó a la base de datos: ", (process.env.urlDB).blue);
+})
 
-app.listen(process.env.port, ()=> {
-    console.log('[Node]'.green,' esta corriendo en el puerto', (process.env.port).blue);
+
+/* Diciéndole al servidor que escuche el puerto que está en el archivo de configuración. */
+app.listen(process.env.PORT, () => {
+/* Imprimiendo un mensaje a la consola. */
+    console.log('[NODE]'.green, 'esta corriendo en el puerto:'.red, (process.env.PORT).yellow);
 })

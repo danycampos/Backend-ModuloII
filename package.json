@@ -1,17 +1,19 @@
 {
-  "name": "practica",
+  "name": "server",
   "version": "1.0.0",
-  "description": "Creación de rutas",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Daniel Campos",
+  "author": "pedro.esparza",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "colors": "^1.4.0",
     "express": "^4.17.3",
-    "mongoose": "^6.3.0"
-  }
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.3.1"
+  },
+  "devDependencies": {},
+  "description": ""
 }

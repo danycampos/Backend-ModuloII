@@ -18,15 +18,18 @@ let SchemaProducto = mongoose.Schema({
         required: [true,'No se recibio el strDescripcion, favor de ingresarlo'] 
     },
     //nombre, tipo, si es requerido o no y el mensaje si es requerido y no se manda
-    nmbCantidad:{
-        type: Number,
-        required: [true,'No se recibio el nmbCantidad, favor de ingresarlo'] 
+    strCiudad:{
+        type: String,
+        required: [true,'No se recibio el strCiudad, favor de ingresarlo'] 
     },
-    //nombre, tipo, si es requerido o no y el mensaje si es requerido y no se manda
-    nmbPrecio:{
+    nmbTelefono:{
         type: Number,
-        required: [true,'No se recibio el nmbPrecio, favor de ingresarlo'] 
+        required: [true,'No se recibio el nmbTelefono, favor de ingresarlo'] 
+    },
+    nmbCodigoPostal:{
+        type: Number,
+        required: [true,'No se recibio el nmbCodigoPostal, favor de ingresarlo'] 
     }
 })
 //exporetamos el eschema con el nombre de producto
-module.exports = mongoose.model('producto',SchemaProducto);
+module.exports = mongoose.model('empresa',SchemaProducto);
