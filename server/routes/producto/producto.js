@@ -4,32 +4,34 @@ const productoModel = require('../../models/producto/producto.model');
 
 //Método Get
 app.get('/',  async (req, res) => {
+    const cblnEstado = req.query.blnEstado == "true" ? true: false;
+    console.log(cblnEstado);
+    const obtenerProductos =  await usuarioModel.find({ blnEstado: cblnEstado  });
+    console.log(obtenerUsuarios);
+    console.log(obtenerProductos);
 
-const obtenerProductos =  await productoModel.find();
-console.log(obtenerProductos);
-
-if(obtenerProductos.length > 0)
-{
-    
-    return res.status(200).json({
-        ok:true,
-        msg:"Se conectó al metódo get de producto",
+    if(obtenerProductos.length > 0)
+    {
+        
+        return res.status(200).json({
+            ok:true,
+            msg:"Se conectó al metódo get de producto",
+            cont:{
+              obtenerProductos
+            }
+          });
+    }
+    else
+    {
+      return res.status(200).json({
+        ok:false,
+        msg:"Se conectó al metódo get de producto, no se encontraron productos",
         cont:{
           obtenerProductos
         }
       });
-}
-else
-{
-  return res.status(200).json({
-    ok:false,
-    msg:"Se conectó al metódo get de producto, no se encontraron productos",
-    cont:{
-      obtenerProductos
-    }
-  });
 
-}
+    }
 
 
 });
@@ -88,7 +90,7 @@ app.put('/', async (req, res)=>{
         }
       });     
     }
-    const encontrarProducto = await productoModel.findOne({ _id: _idProducto });
+    const encontrarProducto = await productoModel.findOne({ strNombre: req.body.strNombre, _id:{ $ne: _idProducto } , blnEstado:true});
     if(!encontrarProducto){
       return res.status(400).json({
         ok:false,

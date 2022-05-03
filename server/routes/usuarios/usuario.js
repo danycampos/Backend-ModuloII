@@ -5,8 +5,9 @@ const usuarioModel = require('../../models/usuario/usuario.model');
 
 //Método get
 app.get('/',  async (req, res) => {
-
-const obtenerUsuarios =  await usuarioModel.find({},{ strContrasena:0 });
+const cblnEstado = req.query.blnEstado == "true" ? true: false;
+console.log(cblnEstado);
+const obtenerUsuarios =  await usuarioModel.find({ blnEstado: cblnEstado  },{ strContrasena:0 });
 console.log(obtenerUsuarios);
 
 if(obtenerUsuarios.length > 0)
@@ -37,13 +38,16 @@ app.post('/', async (req, res)=>{
     const encontroEmail = await usuarioModel.find( { strEmail: body.strEmail } );
     const encontroNombreUsuario = await usuarioModel.find( { strNombreUsuario: body.strNombreUsuario } );
     
+    console.log(body);
+   console.log(encontroEmail);
+
     if(encontroEmail.length > 0 )
     {
         return res.status(200).json({
             ok:false,
             msg:"El usuario no se registro debido a que ya existe el email",
             cont:{
-                obtenerUsuario
+                encontroEmail
             }
         });
 
@@ -55,7 +59,7 @@ app.post('/', async (req, res)=>{
             ok:false,
             msg:"El usuario no se registro debido a que ya existe el nombre de usuario",
             cont:{
-                obtenerUsuario
+                encontroNombreUsuario
             }
         });
 
@@ -89,6 +93,7 @@ app.post('/', async (req, res)=>{
 app.put('/', async(req, res)=>{
     try {
         const _idUsuario = req.query._id;
+        const strNombreUsuario = req.body.strNombreUsuario;
         if(!_idUsuario || _idUsuario.length != 24 ){
             return res.status(400).json({
                 ok:false,
@@ -99,7 +104,7 @@ app.put('/', async(req, res)=>{
             });
         }
 
-        const encontroUsuario = await usuarioModel.findOne({ _id:_idUsuario })
+        const encontroUsuario = await usuarioModel.findOne({ _id:_idUsuario, blnEstado: true })
         if(!encontroUsuario){
             return res.status(400).json({
                 ok:false,
@@ -110,8 +115,9 @@ app.put('/', async(req, res)=>{
             });
         }
 
-        const encontroNombreDeUsuario = await usuarioModel.findOne({ strNombreUsuario:strNombreUsuario, _id:{ $ne: _idUsuario } }, { strNombre:1, strApellido:1, strDomicilio:1 })
-        if(encontroUsuario){
+        const encontroNombreDeUsuario = await usuarioModel.findOne({ strNombreUsuario:strNombreUsuario }, { strNombre:1, strApellido:1, strDomicilio:1 })
+        console.log(strNombreUsuario);
+        if(encontroNombreDeUsuario){
             return res.status(400).json({
                 ok:false,
                 msg: "El usuario ya se encuentra registrado en la base de datos",
@@ -122,7 +128,7 @@ app.put('/', async(req, res)=>{
         }
 
 
-        const actualizarUsuario = await usuarioModel.findByIdAndUpdate(_idUsuario , { $set: { strNombre: req.body.strNombre, strApellido:req.body.strApellido, strDireccion:req.body.strDireccion }}, { new:true } );
+        const actualizarUsuario = await usuarioModel.updateMany({_id:_idUsuario} , { $set: { strNombre: req.body.strNombre, strApellido:req.body.strApellido, strDireccion:req.body.strDireccion }}, { new:true } );
 
         return res.status(200).json({
             ok:true,
