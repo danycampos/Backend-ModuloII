@@ -6,9 +6,7 @@ const usuarioModel = require('../../models/usuario/usuario.model');
 //Método get
 app.get('/',  async (req, res) => {
 const cblnEstado = req.query.blnEstado == "true" ? true: false;
-console.log(cblnEstado);
 const obtenerUsuarios =  await usuarioModel.find({ blnEstado: cblnEstado  },{ strContrasena:0 });
-console.log(obtenerUsuarios);
 
 if(obtenerUsuarios.length > 0)
 {
@@ -127,15 +125,14 @@ app.put('/', async(req, res)=>{
             });
         }
 
-
-        const actualizarUsuario = await usuarioModel.updateMany({_id:_idUsuario} , { $set: { strNombre: req.body.strNombre, strApellido:req.body.strApellido, strDireccion:req.body.strDireccion }}, { new:true } );
+        const actualizarUsuario = await usuarioModel.findByIdAndUpdate({_id:_idUsuario} , { $set: { strNombre: req.body.strNombre, strApellido:req.body.strApellido, strDireccion:req.body.strDireccion, strNombreUsuario:req.body.strNombreUsuario,idEmpresa:req.body.idEmpresa }}, { new:true } );
 
         return res.status(200).json({
             ok:true,
             msg:"El usuario se actualizó de manera exitosa",
             cont:{
               usuarioAnterior:encontroUsuario,
-              usuarioActual:req.body
+              usuarioActual:actualizarUsuario
             }
           });
 

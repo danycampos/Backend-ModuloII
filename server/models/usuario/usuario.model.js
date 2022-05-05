@@ -28,6 +28,10 @@ let SchemaUsuario = mongoose.Schema({
     blnEstado:{
         type:Boolean,
         default:true
+    },
+    idEmpresa:{
+        type:mongoose.Types.ObjectId,
+        required:[true, "No se recibió el idEmpresa"]
     }
 });
 
