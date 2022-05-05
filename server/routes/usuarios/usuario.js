@@ -5,14 +5,26 @@ const usuarioModel = require('../../models/usuario/usuario.model');
 
 //Método get
 app.get('/',  async (req, res) => {
-const cblnEstado = req.query.blnEstado == "true" ? true: false;
-const obtenerUsuarios =  await usuarioModel.find({ blnEstado: cblnEstado  },{ strContrasena:0 });
+const blnEstado = req.query.blnEstado == "true" ? true: false;
+// const obtenerUsuarios =  await usuarioModel.find({ blnEstado: cblnEstado  },{ strContrasena:0 });
+const obtenerUsuarios =  await usuarioModel.aggregate([
+    {$match:{blnEstado:blnEstado}},
+    {
+        $lookup:{
+            from:"empresas",
+            localField:"idEmpresa",
+            foreignField: "_id",
+            as:"empresa"
+        }
+    }
+]);
+
 
 if(obtenerUsuarios.length > 0)
 {
     return res.status(200).json({
         ok:true,
-        msg:"Se conectó al metódo get de usuarios",
+        msg:"Se encontraron usuarios",
         cont:{
             obtenerUsuarios
         }
